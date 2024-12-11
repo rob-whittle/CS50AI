@@ -256,6 +256,11 @@ class MinesweeperAI():
         self.infer_new_knowledge()
         
     def infer_new_knowledge(self):
+        """
+        Called by add_knowledge method
+        iterates over sentences in knowledge and checks if any new mines
+        or safes can be identified or any new sentences inferred
+        """
 
         safe_cells = set()
         mine_cells = set()
