@@ -140,11 +140,6 @@ def joint_probability(people, one_gene, two_genes, have_trait):
         * everyone in set `have_trait` has the trait, and
         * everyone not in set` have_trait` does not have the trait.
     """
-
-# for each person, if no parents, calc prob of having gene, then calc prob of having trait given number of genes
-# if have parents, gene prob comes from inheritence, trait prob is same calc
-# Make a person dict and define attributes for number of genes, trait, parent/child
-
     # New dictionary to track probability calcs for each person
     probabilities = dict.fromkeys(people, None)
 
@@ -171,7 +166,8 @@ def joint_probability(people, one_gene, two_genes, have_trait):
             probabilities[person] = p
 
         # if they have parents then need to calc the probability they
-        # inherited the gene from parents
+        # inherited the gene from parents, rather than using the unconditional
+        #  probability
         else:
             p_mother = inherit_gene(mother, one_gene, two_genes)
             p_father = inherit_gene(father, one_gene, two_genes)
