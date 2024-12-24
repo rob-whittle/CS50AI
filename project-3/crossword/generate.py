@@ -114,8 +114,6 @@ class CrosswordCreator():
         Return True if a revision was made to the domain of `x`; return
         False if no revision was made.
         """
-        # print("Revise called for:", x, y)
-        # print("  Before Revision - Domain of x:", self.domains[x], "Domain of y:", self.domains[y])
         # if overlap a pair of ints (i,j) is returned indicating x(i) overlaps y(j)
         overlaps = self.crossword.overlaps[x, y]
         i = overlaps[0]
@@ -138,7 +136,6 @@ class CrosswordCreator():
                 if not matches:
                     # remove the word if no possible match
                     self.domains[x].remove(x_word)
-            # print("  After Revision - Domain of x:", self.domains[x], "Domain of y:", self.domains[y])
             return True
 
         return False
@@ -279,14 +276,17 @@ class CrosswordCreator():
             # if this word is consistent then recursively call
             # backtrack to check remaining variables in space
             if self.consistent(assignment):
-                result = self.backtrack(assignment)
-                # if result is None remove the assignment
-                # loop will try next word in domain
-                if result is None:
-                    del assignment[var]
-                # otherwise break loop through this variables domain
-                else:
-                    return assignment
+                # check arc consistency of var's neighbors
+                if self.ac3([(n, var) for n in self.crossword.neighbors(var)]):
+                    # recursively call backtrack
+                    result = self.backtrack(assignment)
+                    # if result is None remove the assignment
+                    # loop will try next word in domain
+                    if result is None:
+                        del assignment[var]
+                    # otherwise break loop through this variables domain
+                    else:
+                        return assignment
         return None
 
 
