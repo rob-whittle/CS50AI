@@ -3,6 +3,7 @@ import sys
 
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import recall_score
 
 TEST_SIZE = 0.4
 
@@ -38,23 +39,23 @@ def load_data(filename):
 
     evidence should be a list of lists, where each list contains the
     following values, in order:
- Administrative, an integer
- Administrative_Duration, a floating point number
- Informational, an integer
- Informational_Duration, a floating point number
- ProductRelated, an integer
- ProductRelated_Duration, a floating point number
- BounceRates, a floating point number
- ExitRates, a floating point number
- PageValues, a floating point number
- SpecialDay, a floating point number
- Month, an index from 0 (January) to 11 (December)
- OperatingSystems, an integer
- Browser, an integer
- Region, an integer
- TrafficType, an integer
- VisitorType, an integer 0 (not returning) or 1 (returning)
- Weekend, an integer 0 (if false) or 1 (if true)
+        - Administrative, an integer
+        - Administrative_Duration, a floating point number
+        - Informational, an integer
+        - Informational_Duration, a floating point number
+        - ProductRelated, an integer
+        - ProductRelated_Duration, a floating point number
+        - BounceRates, a floating point number
+        - ExitRates, a floating point number
+        - PageValues, a floating point number
+        - SpecialDay, a floating point number
+        - Month, an index from 0 (January) to 11 (December)
+        - OperatingSystems, an integer
+        - Browser, an integer
+        - Region, an integer
+        - TrafficType, an integer
+        - VisitorType, an integer 0 (not returning) or 1 (returning)
+        - Weekend, an integer 0 (if false) or 1 (if true)
 
     labels should be the corresponding list of labels, where each label
     is 1 if Revenue is true, and 0 otherwise.
@@ -88,9 +89,11 @@ def load_data(filename):
             ])
             labels.append(int(1) if row[-1] == "TRUE" else int(0))
 
+    return (evidence, labels)
+
 
 def month_converter(month):
-    months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     return months.index(month)
 
 
@@ -99,7 +102,12 @@ def train_model(evidence, labels):
     Given a list of evidence lists and a list of labels, return a
     fitted k-nearest neighbor model (k=1) trained on the data.
     """
-    raise NotImplementedError
+    model = KNeighborsClassifier(n_neighbors=1)
+
+    # Train model
+    X_training = [x for x in evidence]
+    y_training = [y for y in labels]
+    return model.fit(X_training, y_training)
 
 
 def evaluate(labels, predictions):
@@ -117,8 +125,14 @@ def evaluate(labels, predictions):
     representing the "true negative rate": the proportion of
     actual negative labels that were accurately identified.
     """
-    raise NotImplementedError
+    # https://scikit-learn.org/1.5/modules/generated/sklearn.metrics.recall_score.html
+    # Calculate recall
+    # for sensitivity set pos_label to 1 as this represents positive label
+    # for specificity set pos_label to 0 as this represents negative label
+    sensitivity = recall_score(labels, predictions, pos_label=1)
+    specificity = recall_score(labels, predictions, pos_label=0)
 
+    return (sensitivity, specificity)
 
 if __name__ == "__main__":
     main()
